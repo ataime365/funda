@@ -238,4 +238,5 @@ except Exception as e:
     print("There is an Error:", e)
     print("There are no new listings at the moment")
 
-
+now = datetime.now()
+print("Scripts Ended at: ", now)
