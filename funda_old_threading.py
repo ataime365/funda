@@ -70,6 +70,7 @@ def process_row(row):
                 updates['status'] = current_status
 
             if current_status == 'Verkocht':  # Update date_sold if applicable
+                print(f"Updated row: {row['id']}")
                 updates['date_sold'] = todays_date
 
             return (row['id'], updates)
