@@ -68,7 +68,7 @@ while True: # pagination #To know where to stop
     All_links = []
     for link in links:
         href = link.get('href')
-        if href == old_link1 or i==10: #or href == old_link2 #stop at page 10, incase the old_link fails
+        if href == old_link1 or i==15: #or href == old_link2 #stop at page 15, incase the old_link fails
             print("We have reached an old link, Stop!!")
             found_old_link = True
             break #break out of the for loop
@@ -192,7 +192,7 @@ print(len(filtered_total_new_links), ' filtered_total_new_links')
 MAX_THREADS = int(MAX_THREADS)
 with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
     # Use executor.map to apply the function to all links
-    results = executor.map(fetch_and_process_page, filtered_total_new_links[0:50]) #[10:15]
+    results = executor.map(fetch_and_process_page, filtered_total_new_links[20:40]) #[10:15]
     # Results is an iterator of returned values from fetch_and_process_page
     # Filter out None values in case of any exceptions
     processed_items_li = [result for result in results if result is not None]
