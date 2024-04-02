@@ -90,7 +90,7 @@ def fetch_and_process_page(link):
         payload = {'api_key': scraperapi_apikey, 'url': link } # Use this two lines to use scraperapi
         response = requests.get('https://api.scraperapi.com/', params=payload)
         print(link)
-        time.sleep(randint(2, 3))
+        # time.sleep(randint(2, 3))
 
         tree = html.fromstring(response.content)
         
