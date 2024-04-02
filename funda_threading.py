@@ -34,12 +34,9 @@ total_new_links = []
 i = 0
 
 old_link1, all_db_url = get_most_recent_listing_url_and_all_urls(engine)
-# old_link1 =  get_most_recent_listing_url_and_all_urls(engine)[0] #"https://www.funda.nl/koop/alkmaar/huis-43438698-wielingenweg-203/" #second_to_last_url_from_database
 # old_link1 = "https://www.funda.nl/koop/helvoirt/huis-43438730-broekwal-9/" # use this for fresh database and table
 print(old_link1, 'old_link1')
-# old_link2 = "https://www.funda.nl/koop/helmond/huis-43437288-kaukasus-36/" # last_url_from_database 
 
-# all_db_url = get_most_recent_listing_url_and_all_urls(engine)[1]
 print(len(all_db_url), " all_db_url")
 
 found_old_link = False  # Flag to indicate if an old link has been found
@@ -58,7 +55,7 @@ while True: # pagination #To know where to stop
     # response = requests.get(url, headers=headers)
     
     payload = {'api_key': scraperapi_apikey , 'url': url } # Use this two lines to use scraperapi
-    response = requests.get('https://api.scraperapi.com/', params=payload) #No need for mr to specify headers, scraperapi is the one sending the requests for me
+    response = requests.get('https://api.scraperapi.com/', params=payload) #No need for me to specify headers, scraperapi is the one sending the requests for me
     print(f"we are on page {i}")
     # time.sleep(randint(2, 4))
 
@@ -68,7 +65,7 @@ while True: # pagination #To know where to stop
     All_links = []
     for link in links:
         href = link.get('href')
-        if href == old_link1 or i==15: #or href == old_link2 #stop at page 15, incase the old_link fails
+        if href == old_link1 or i==20: #or href == old_link2 #stop at page 20, incase the old_link1 fails
             print("We have reached an old link, Stop!!")
             found_old_link = True
             break #break out of the for loop
@@ -174,9 +171,10 @@ def fetch_and_process_page(link):
         return None
 
 
-# Convert all_db_url to a set for faster lookup
+# Convert all_db_url to a set for faster lookup 
 all_db_url_set = set(all_db_url)
 
+#Filter our duplicates if any
 filtered_total_new_links = []
 for link in total_new_links:
     if link not in all_db_url_set:
@@ -192,7 +190,7 @@ print(len(filtered_total_new_links), ' filtered_total_new_links')
 MAX_THREADS = int(MAX_THREADS)
 with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
     # Use executor.map to apply the function to all links
-    results = executor.map(fetch_and_process_page, filtered_total_new_links[20:40]) #[10:15]
+    results = executor.map(fetch_and_process_page, filtered_total_new_links) #[10:15]
     # Results is an iterator of returned values from fetch_and_process_page
     # Filter out None values in case of any exceptions
     processed_items_li = [result for result in results if result is not None]

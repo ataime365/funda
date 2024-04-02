@@ -51,45 +51,8 @@ properties_table = Table(funda_listings_table, metadata,
                         )
 
 
-
 # Create the table in the database if it doesn't exist
 metadata.create_all(engine)
 
-
 # Create a configured "Session" class
 Session = sessionmaker(bind=engine)
-
-
-# # Testing the database connection
-# with engine.connect() as connection:
-#     result_df = pd.read_sql('SELECT * FROM funda_listings', connection)
-
-# # Now you can use result_df which contains the query results
-# print(result_df)
-
-
-# def get_most_recent_listing_url(engine):
-#     """This function is meant to read the table in the database and get the most recently scraped url.
-#     The while loop pagination uses this to know where to stop"""
-#     df = pd.read_sql_table('funda_listings', engine)
-#     # record_with_highest_id = df.loc[df['id'].idxmax()]
-#     # url_of_record_with_highest_id = record_with_highest_id['url']
-#     sorted_df = df.sort_values(by=['date_listed', 'id'], ascending=[False, True]).drop_duplicates(subset='date_listed', keep='first')
-#     most_recent_record = sorted_df.iloc[0]
-#     url_of_most_recent_record = most_recent_record['url']
-    
-#     return url_of_most_recent_record
-
-# a = get_most_recent_listing_url(engine)
-# print(a)
-
-# df = pd.read_sql_table('funda_listings', engine)
-# # record_with_highest_id = df.loc[df['id'].idxmax()]
-# # url_of_record_with_highest_id = record_with_highest_id['url']
-# sorted_df = df.sort_values(by=['date_listed', 'id'], ascending=[False, True]) #.drop_duplicates(subset='date_listed', keep='first')
-# most_recent_record = sorted_df.iloc[0]
-# second_most_recent_record = sorted_df.iloc[1]
-# url_of_most_recent_record = most_recent_record['url']
-
-# print(most_recent_record['url'])
-# print(second_most_recent_record['url'])

@@ -1,7 +1,6 @@
 requests
 lxml
-pandas
-psycopg2
-sqlalchemy
+pandas==1.4.2
+sqlalchemy==1.4.36
 python-dotenv
 psycopg2-binary
