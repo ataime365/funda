@@ -31,7 +31,7 @@ list_of_user_agents = [
 def split_address(address):
     parts = address.split()
     street_name = []
-    house_number = ''
+    house_number = None
     house_number_addition = []
 
     # Flag to indicate that the house number has been found

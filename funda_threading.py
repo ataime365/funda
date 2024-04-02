@@ -47,7 +47,7 @@ found_old_link = False  # Flag to indicate if an old link has been found
 # Pagination
 while True: # pagination #To know where to stop
     i = i +1
-    url = f"https://www.funda.nl/zoeken/koop?selected_area=%5B%22nl%22%5D&sort=%22date_down%22&object_type=%5B%22house%22,%22apartment%22,%22land%22%5D&availability=%5B%22available%22%5D&search_result={i}"
+    url = f"https://www.funda.nl/zoeken/koop?selected_area=%5B%22nl%22%5D&sort=%22date_down%22&object_type=%5B%22house%22,%22apartment%22,%22land%22%5D&availability=%5B%22available%22%5D&construction_type=%5B%22resale%22%5D&search_result={i}"
 
     selected_user_agent = random.choice(list_of_user_agents)
     # print(selected_user_agent)
