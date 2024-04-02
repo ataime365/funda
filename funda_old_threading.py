@@ -24,6 +24,7 @@ load_dotenv()
 scraperapi_apikey = os.getenv('SCRAPERAPI_APIKEY')
 funda_listings_table = os.getenv('FUNDA_LISTINGS_TABLE')
 MAX_THREADS = os.getenv('MAX_THREADS')
+MAX_THREADS = int(MAX_THREADS)
 
 
 today = datetime.now()

@@ -40,7 +40,7 @@ print(old_link1, 'old_link1')
 # old_link2 = "https://www.funda.nl/koop/helmond/huis-43437288-kaukasus-36/" # last_url_from_database 
 
 # all_db_url = get_most_recent_listing_url_and_all_urls(engine)[1]
-print(len(all_db_url))
+print(len(all_db_url), " all_db_url")
 
 found_old_link = False  # Flag to indicate if an old link has been found
 
@@ -90,7 +90,7 @@ def fetch_and_process_page(link):
         payload = {'api_key': scraperapi_apikey, 'url': link } # Use this two lines to use scraperapi
         response = requests.get('https://api.scraperapi.com/', params=payload)
         print(link)
-        # time.sleep(randint(10, 15)) #remove this later when proxy is installed
+        time.sleep(randint(2, 3))
 
         tree = html.fromstring(response.content)
         
@@ -174,12 +174,25 @@ def fetch_and_process_page(link):
         return None
 
 
+# Convert all_db_url to a set for faster lookup
+all_db_url_set = set(all_db_url)
+
+filtered_total_new_links = []
+for link in total_new_links:
+    if link not in all_db_url_set:
+        filtered_total_new_links.append(link)
+    else:
+        print("duplicate link")
+
+print(len(filtered_total_new_links), ' filtered_total_new_links')
+
+
 # This is where the multi-threading starts
 # Set the maximum number of threads
-MAX_THREADS = MAX_THREADS
+MAX_THREADS = int(MAX_THREADS)
 with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
     # Use executor.map to apply the function to all links
-    results = executor.map(fetch_and_process_page, total_new_links) #[10:15]
+    results = executor.map(fetch_and_process_page, filtered_total_new_links[0:50]) #[10:15]
     # Results is an iterator of returned values from fetch_and_process_page
     # Filter out None values in case of any exceptions
     processed_items_li = [result for result in results if result is not None]
