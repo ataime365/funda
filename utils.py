@@ -71,15 +71,28 @@ def extract_status(response):
     return current_status
 
 
-def get_most_recent_listing_url(engine):
+def get_most_recent_listing_url_and_all_urls(engine):
     """This function is meant to read the table in the database and get the most recently scraped url.
     The while loop pagination uses this to know where to stop"""
     df = pd.read_sql_table(funda_listings_table, engine)
-    sorted_df = df.sort_values(by=['date_listed', 'id'], ascending=[False, True])
+    sorted_df = df.sort_values(by=['date_listed', 'id'], ascending=[False, True]) #Highest date and lowest id
     most_recent_record = sorted_df.iloc[0]
     url_of_most_recent_record = most_recent_record['url']
+    # get all urls, so that we only read the database once
+    df = pd.read_sql_table(funda_listings_table, engine)
+    all_url = df['url']
+    all_db_url = list(all_url)
+    all_db_url = [item for item in all_db_url if item]
     
-    return url_of_most_recent_record
+    return url_of_most_recent_record, all_db_url
+
+
+# def get_all_db_url(engine):
+#     df = pd.read_sql_table(funda_listings_table, engine)
+#     all_url = df['url']
+#     all_db_url = list(all_url)
+#     all_db_url = [item for item in all_db_url if item]
+#     return all_db_url
 
 
 def extract_year(text):

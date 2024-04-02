@@ -23,6 +23,7 @@ load_dotenv()
 
 scraperapi_apikey = os.getenv('SCRAPERAPI_APIKEY')
 funda_listings_table = os.getenv('FUNDA_LISTINGS_TABLE')
+MAX_THREADS = os.getenv('MAX_THREADS')
 
 
 today = datetime.now()
@@ -35,6 +36,8 @@ df = pd.read_sql_table(funda_listings_table, engine) #database
 
 # Filter out records with status 'Verkocht'
 df_filtered = df[df['status'] != 'Verkocht'] #listings that are not Sold
+df_filtered = df_filtered[df_filtered['url'].notna()]
+
 df_filtered = df_filtered.tail(5) #[:20] # Remove this later
 print(len(df_filtered), " Number of Rows")
 
@@ -78,7 +81,7 @@ def process_row(row):
         return None
 
 
-MAX_THREADS = 5  # Adjust this number based on your system's capabilities and the server's tolerance
+MAX_THREADS = MAX_THREADS  # Adjust this number based on your system's capabilities and the server's tolerance
 
 with Session(engine) as session, concurrent.futures.ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
     # Prepare a list of futures

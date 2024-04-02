@@ -11,7 +11,7 @@ from sqlalchemy import insert
 import concurrent.futures
 from dotenv import load_dotenv
 
-from utils import list_of_user_agents, split_address, get_most_recent_listing_url, extract_year
+from utils import list_of_user_agents, split_address, get_most_recent_listing_url_and_all_urls, extract_year
 from database import engine, properties_table, Session
 
 
@@ -19,6 +19,7 @@ load_dotenv()
 
 scraperapi_apikey = os.getenv('SCRAPERAPI_APIKEY')
 funda_listings_table = os.getenv('FUNDA_LISTINGS_TABLE')
+MAX_THREADS = os.getenv('MAX_THREADS')
 
 # Get today's date
 today = datetime.now()
@@ -31,10 +32,15 @@ todays_date = datetime(today.year, today.month, today.day)
 ### To make sure we dont scrape old links
 total_new_links = [] 
 i = 0
-old_link1 =  get_most_recent_listing_url(engine) #"https://www.funda.nl/koop/alkmaar/huis-43438698-wielingenweg-203/" #second_to_last_url_from_database
+
+old_link1, all_db_url = get_most_recent_listing_url_and_all_urls(engine)
+# old_link1 =  get_most_recent_listing_url_and_all_urls(engine)[0] #"https://www.funda.nl/koop/alkmaar/huis-43438698-wielingenweg-203/" #second_to_last_url_from_database
 # old_link1 = "https://www.funda.nl/koop/helvoirt/huis-43438730-broekwal-9/" # use this for fresh database and table
 print(old_link1, 'old_link1')
 # old_link2 = "https://www.funda.nl/koop/helmond/huis-43437288-kaukasus-36/" # last_url_from_database 
+
+# all_db_url = get_most_recent_listing_url_and_all_urls(engine)[1]
+print(len(all_db_url))
 
 found_old_link = False  # Flag to indicate if an old link has been found
 
@@ -170,7 +176,7 @@ def fetch_and_process_page(link):
 
 # This is where the multi-threading starts
 # Set the maximum number of threads
-MAX_THREADS = 5
+MAX_THREADS = MAX_THREADS
 with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
     # Use executor.map to apply the function to all links
     results = executor.map(fetch_and_process_page, total_new_links) #[10:15]
@@ -201,9 +207,12 @@ try:
         with Session() as session:  # This begins a new session
             try:
                 # Insert each row individually
-                ins_query = insert(properties_table).values(row_data)
-                session.execute(ins_query)
-                session.commit()  # The transaction is committed here
+                if row_data['url'] not in all_db_url: #Filtering out duplicates, if any
+                    ins_query = insert(properties_table).values(row_data)
+                    session.execute(ins_query)
+                    session.commit()  # The transaction is committed here
+                else:
+                    print(f"This is a duplicate url {row_data['url']}")
             except SQLAlchemyError as e:
                 # The session is rolled back automatically if an exception occurs
                 print(f"Error inserting row {index}: {e}")
