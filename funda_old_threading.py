@@ -39,7 +39,7 @@ df = pd.read_sql_table(funda_listings_table, engine) #database
 df_filtered = df[df['status'] != 'Verkocht'] #listings that are not Sold
 df_filtered = df_filtered[df_filtered['url'].notna()]
 
-df_filtered = df_filtered.tail(5) #[:20] # Remove this later
+# df_filtered = df_filtered.tail(5) #[:20] # Remove this later
 print(len(df_filtered), " Number of Rows")
 
 # Reflect the table from the database
@@ -57,12 +57,12 @@ def process_row(row):
         # response = requests.get(url, headers=headers) #response for each individual page
         payload = {'api_key': scraperapi_apikey, 'url': url } # Use this two lines to use scraperapi
         response = requests.get('https://api.scraperapi.com/', params=payload)
-        print(response.status_code, 'status code')
-        
+
+
         if response.status_code == 200:
 
             current_status = extract_status(response)  # Assuming extract_status() processes response content
-            print(f"current_status: {current_status}")
+            print(f"current_status: {current_status} and status_code: {response.status_code}")
             # current_status = 'Verkocht' # For testing purpose #Remove
 
             updates = {}
