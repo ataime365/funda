@@ -87,12 +87,14 @@ MAX_THREADS = MAX_THREADS  # Adjust this number based on your system's capabilit
 
 with Session(engine) as session, concurrent.futures.ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
     # Prepare a list of futures
-    futures = [executor.submit(process_row, row) for index, row in df_filtered.iterrows()]
+    futures = [executor.submit(process_row, row) for index, row in df_filtered.iterrows()] #This is where the get requests is sent
+    # futures is a list of Future which acts as a placeholder for the real result (row_id1, {'status': 'Verkocht', 'date_sold': todays_date}) or None
 
+    # This is for updating the database, if any updates
     for future in concurrent.futures.as_completed(futures):
-        result = future.result()
+        result = future.result() #This gets the real results from the place holder
         if result:
-            row_id, updates = result
+            row_id, updates = result #if results exists(is not None), it will be a tuple
             if updates:
                 stmt = update(table).where(table.c.id == row_id).values(**updates)
                 session.execute(stmt)
